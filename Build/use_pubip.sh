@@ -46,7 +46,6 @@ then
   echo '  fi' >> /vagrant/install_server.sh
   echo '  sleep 2' >> /vagrant/install_server.sh
   echo 'done' >> /vagrant/install_server.sh
-  echo "echo 'INSTALL_SERVER INFO: Final IP for the cluster: $pubip'" >> /vagrant/install_server.sh
 fi
 if [ -e /etc/rancher/k3s/registry.yaml ]
 then

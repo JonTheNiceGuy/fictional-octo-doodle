@@ -12,13 +12,18 @@ Vagrant.configure("2") do |config|
     vb.linked_clone = true
   end
   config.vm.provision "shell", run: "always", inline: <<-EOF
-    echo "PROVISION NOTICE: Removing NAT-interface default route"
     if ip route | grep default | grep enp0s3 >/dev/null
     then
+      echo "PROVISION NOTICE: Removing NAT-interface default route"
       ip route delete default dev enp0s3
     fi
+    if [ -e /vagrant/Keys ]
+    then
+      echo "PROVISION NOTICE: Adding any extra public keys to the 'vagrant' user"
+      find /vagrant/Keys -type f -exec /vagrant/Build/add_key.sh '{}' /home/vagrant/.ssh/authorized_keys vagrant \\;
+    fi
+    echo "IP for $(hostname): $(ip -j -4 addr show dev enp0s8 | grep local | cut -d\\" -f4 2>/dev/null)"
   EOF
-
   config.vm.define "k3svm-a" do |k3svm_a|
     k3svm_a.vm.hostname = "k3svm-a"
     k3svm_a.vm.provider "virtualbox" do |vb|
